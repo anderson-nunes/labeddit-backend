@@ -63,3 +63,18 @@ CREATE TABLE post_like_dislike (
 
 SELECT * FROM post_like_dislike;
 DROP TABLE post_like_dislike;
+
+CREATE TABLE comment_like_dislike (
+  comment_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  vote INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE 
+  FOREIGN KEY (comment_id) REFERENCES comments(id)
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE 
+);
+
+SELECT * FROM comment_like_dislike;
+DROP TABLE comment_like_dislike;
