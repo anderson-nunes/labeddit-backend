@@ -11,6 +11,11 @@ CREATE TABLE users (
 SELECT * FROM users;
 DROP TABLE users;
 
+INSERT INTO users(id, name, email, password, role)
+VALUES
+('u001', 'Anderson', 'anderson@email.com', 'and123', 'ADMIN'),
+('u002', 'Patricia', 'patricia@email.com', 'pati123', 'NORMAL');
+
 
 CREATE TABLE posts (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
