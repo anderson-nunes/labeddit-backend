@@ -6,7 +6,7 @@ export interface CreateCommentInputDTO {
   postId: string;
 }
 
-export type CreateCommentOutputDTO = undefined;
+export type CreateCommentOutputDTO = any;
 
 export const CreateCommentSchema = z
   .object({

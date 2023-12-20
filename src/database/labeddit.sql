@@ -48,8 +48,8 @@ CREATE TABLE comments (
   creator_id TEXT NOT NULL,
   post_id TEXT NOT NULL,
   content TEXT NOT NULL,
-  like INTEGER NOT NULL,
-  dislike INTEGER NOT NULL,
+  likes INTEGER NOT NULL,
+  dislikes INTEGER NOT NULL,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (creator_id) REFERENCES users(id)
