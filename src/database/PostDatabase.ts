@@ -11,6 +11,14 @@ export class PostDatabase extends BaseDatabase {
   public static TABLE_POST = "posts";
   public static TABLE_LIKES_DISLIKES = "likes_dislikes";
 
+  public async findPosts(): Promise<PostDB[]> {
+    const postsDB: PostDB[] = await BaseDatabase.connection(
+      PostDatabase.TABLE_POST
+    ).select();
+
+    return postsDB;
+  }
+
   public async findPostsWithCreatorName(): Promise<PostDBWithCreatorName[]> {
     const postsDB: PostDBWithCreatorName[] = await BaseDatabase.connection(
       PostDatabase.TABLE_POST

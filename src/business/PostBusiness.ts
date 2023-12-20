@@ -46,19 +46,18 @@ export class PostBusiness {
       throw new BadRequestError("Token inválido");
     }
 
-    const postDBWithCreatorName =
-      await this.postDataBase.findPostsWithCreatorName();
+    const postsDB = await this.postDataBase.findPosts();
 
-    const postModel = postDBWithCreatorName.map((postWithCreatorName) => {
+    const postModel = postsDB.map((postDB) => {
       const post = new Post(
-        postWithCreatorName.id,
-        postWithCreatorName.content,
-        postWithCreatorName.likes,
-        postWithCreatorName.dislikes,
-        postWithCreatorName.created_at,
-        postWithCreatorName.updated_at,
-        postWithCreatorName.creator_id,
-        postWithCreatorName.creator_name
+        postDB.id,
+        postDB.content,
+        postDB.likes,
+        postDB.dislikes,
+        postDB.comments,
+        postDB.created_at,
+        postDB.updated_at,
+        postDB.creator_id
       );
 
       return post.toBusinissModel();
@@ -82,22 +81,33 @@ export class PostBusiness {
 
     const id = this.IdGenerator.generate();
 
+    console.log("@post", {
+      id,
+      content,
+      likes: 0,
+      dislikes: 0,
+      comments: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      creatorId: payload.id,
+    });
+
     const post = new Post(
       id,
       content,
       0,
       0,
+      0,
       new Date().toISOString(),
       new Date().toISOString(),
-      payload.id,
-      payload.name
+      payload.id
     );
 
     const postDB = post.toDBModel();
 
-    await this.postDataBase.insertPost(postDB);
+    const response = await this.postDataBase.insertPost(postDB);
 
-    const response: CreatePostOutputDTO = undefined;
+    // const response: CreatePostOutputDTO = undefined;
 
     return response;
   };
@@ -128,10 +138,10 @@ export class PostBusiness {
       postBR.content,
       postBR.likes,
       postBR.dislikes,
+      postBR.comments,
       postBR.created_at,
       postBR.updated_at,
-      postBR.creator_id,
-      payload.name
+      postBR.creator_id
     );
 
     post.setContent(content);
@@ -197,10 +207,10 @@ export class PostBusiness {
       postDBWithCreatorName.content,
       postDBWithCreatorName.likes,
       postDBWithCreatorName.dislikes,
+      postDBWithCreatorName.comments,
       postDBWithCreatorName.created_at,
       postDBWithCreatorName.updated_at,
-      postDBWithCreatorName.creator_id,
-      postDBWithCreatorName.creator_name
+      postDBWithCreatorName.creator_id
     );
 
     const likeSQlite = like ? 1 : 0;
