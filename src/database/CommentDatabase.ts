@@ -10,4 +10,22 @@ export class CommentDatabase extends BaseDatabase {
       commentDB
     );
   };
+
+  public async findCommentByPostId(id: string): Promise<any> {
+    const commentsDB: any = await BaseDatabase.connection(
+      CommentDatabase.TABLE_COMMENTS
+    )
+      .select()
+      .where(`${CommentDatabase.TABLE_COMMENTS}.post_id`, "=", `${id}`);
+
+    return commentsDB;
+  }
+
+  public async findComments(): Promise<CommentDB[]> {
+    const CommentsDB: CommentDB[] = await BaseDatabase.connection(
+      CommentDatabase.TABLE_COMMENTS
+    ).select();
+
+    return CommentsDB;
+  }
 }

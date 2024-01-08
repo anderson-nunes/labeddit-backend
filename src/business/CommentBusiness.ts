@@ -3,6 +3,11 @@ import {
   CreateCommentInputDTO,
   CreateCommentOutputDTO,
 } from "../dtos/comments/createComments.dto";
+import {
+  GetCommentsInputDTO,
+  GetCommentsOutputDTO,
+} from "../dtos/comments/getComments.dtos";
+import { BadRequestError } from "../errors/BadRequestError";
 import { UnauthorizedError } from "../errors/UnauthorizedError";
 import { Comment } from "../models/Comments";
 import { IdGenerator } from "../services/IdGenerator";
@@ -43,5 +48,39 @@ export class CommentBusiness {
 
     const commentDB = comment.toDBModel();
     await this.commentsDatabase.insertComment(commentDB);
+  };
+
+  public getComments = async (
+    input: GetCommentsInputDTO
+  ): Promise<GetCommentsOutputDTO> => {
+    const { token, postId } = input;
+
+    const payload = this.tokenManager.getPayload(token);
+
+    if (!payload) {
+      throw new BadRequestError("Token inválido");
+    }
+
+    const commentsDB = await this.commentsDatabase.findCommentByPostId(postId);
+
+    const commentsModel = commentsDB.map((commentDB: any) => {
+      const comment = new Comment(
+        commentDB.id,
+        commentDB.postId,
+        commentDB.content,
+        commentDB.likes,
+        commentDB.dislikes,
+        commentDB.createdAt,
+        commentDB.updatedAt,
+        commentDB.creatorId,
+        commentDB.creatorName
+      );
+
+      return comment.toBusinessModel();
+    });
+
+    const response: GetCommentsOutputDTO = commentsModel;
+
+    return response;
   };
 }

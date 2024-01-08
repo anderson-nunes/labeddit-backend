@@ -29,3 +29,5 @@ postRouter.delete("/:id", postController.deletePost);
 postRouter.put("/:id/like", postController.likeOrDislikePost);
 // comment routes
 postRouter.post("/:id/comment", commentController.createComment);
+
+postRouter.get("/:id/comment", commentController.getComments);
