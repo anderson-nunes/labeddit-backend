@@ -9,7 +9,7 @@ import {
 
 export class PostDatabase extends BaseDatabase {
   public static TABLE_POST = "posts";
-  public static TABLE_LIKES_DISLIKES = "likes_dislikes";
+  public static TABLE_LIKES_DISLIKES = "post_like_dislike";
 
   public async findPosts(): Promise<PostDB[]> {
     const postsDB: PostDB[] = await BaseDatabase.connection(
@@ -54,6 +54,18 @@ export class PostDatabase extends BaseDatabase {
 
   public insertPost = async (postDB: PostDB): Promise<void> => {
     await BaseDatabase.connection(PostDatabase.TABLE_POST).insert(postDB);
+  };
+
+  public updateCommentNumber = async (postId: string) => {
+    const [postDB]: PostDB[] = await BaseDatabase.connection(
+      PostDatabase.TABLE_POST
+    ).where({ id: postId });
+
+    await BaseDatabase.connection(PostDatabase.TABLE_POST)
+      .update({
+        comments: postDB.comments + 1,
+      })
+      .where({ id: postId });
   };
 
   public updatePost = async (postDB: PostDB): Promise<void> => {

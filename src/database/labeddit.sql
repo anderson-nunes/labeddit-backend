@@ -66,7 +66,7 @@ DROP TABLE comments;
 CREATE TABLE post_like_dislike (
   post_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
-  vote INTEGER NOT NULL,
+  like INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE 
     ON UPDATE CASCADE 
@@ -81,7 +81,7 @@ DROP TABLE post_like_dislike;
 CREATE TABLE comment_like_dislike (
   comment_id TEXT NOT NULL,
   user_id TEXT NOT NULL,
-  vote INTEGER NOT NULL,
+  like INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE 
     ON UPDATE CASCADE 

@@ -1,5 +1,4 @@
 import z from "zod";
-
 export interface LikeOrDislikePostInputDTO {
   postId: string;
   token: string;

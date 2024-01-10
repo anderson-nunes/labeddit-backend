@@ -1,5 +1,4 @@
 import z from "zod";
-
 export interface LoginUserInputDTO {
   email: string;
   password: string;

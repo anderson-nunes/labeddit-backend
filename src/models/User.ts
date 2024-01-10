@@ -2,7 +2,6 @@ export enum USER_ROLES {
   NORMAL = "NORMAL",
   ADMIN = "ADMIN",
 }
-
 export interface UserDB {
   id: string;
   name: string;
@@ -11,7 +10,6 @@ export interface UserDB {
   role: USER_ROLES;
   created_at: string;
 }
-
 export interface UserModel {
   id: string;
   name: string;
@@ -19,13 +17,11 @@ export interface UserModel {
   role: USER_ROLES;
   createdAt: string;
 }
-
 export interface TokenPayload {
   id: string;
   name: string;
   role: USER_ROLES;
 }
-
 export class User {
   constructor(
     private id: string,

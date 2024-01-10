@@ -1,7 +1,5 @@
 import z from "zod";
-import { PostModel } from "../../models/Posts";
 import { CommentModel } from "../../models/Comments";
-
 export interface GetCommentsInputDTO {
   token: string;
   postId: string;

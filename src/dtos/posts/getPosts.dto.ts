@@ -1,6 +1,5 @@
 import z from "zod";
 import { PostModel } from "../../models/Posts";
-
 export interface GetPostsInputDTO {
   token: string;
 }
