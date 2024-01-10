@@ -1,5 +1,4 @@
 import z from "zod";
-
 export interface CreateCommentInputDTO {
   content: string;
   token: string;

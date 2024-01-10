@@ -18,7 +18,8 @@ const commentController = new CommentController(
   new CommentBusiness(
     new CommentDatabase(),
     new IdGenerator(),
-    new TokenManager()
+    new TokenManager(),
+    new PostDatabase()
   )
 );
 
@@ -27,5 +28,11 @@ postRouter.post("/", postController.createPost);
 postRouter.put("/:id", postController.updatePost);
 postRouter.delete("/:id", postController.deletePost);
 postRouter.put("/:id/like", postController.likeOrDislikePost);
+
 // comment routes
 postRouter.post("/:id/comment", commentController.createComment);
+postRouter.get("/:id/comment", commentController.getComments);
+postRouter.put(
+  "/:id/comment/:comment_id/like",
+  commentController.likeOrDislikeComment
+);

@@ -1,5 +1,4 @@
 import z from "zod";
-
 export interface UpdatePostInputDTO {
   content: string;
   token: string;
