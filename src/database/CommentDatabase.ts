@@ -21,9 +21,17 @@ export class CommentDatabase extends BaseDatabase {
     const commentsDB: any = await BaseDatabase.connection(
       CommentDatabase.TABLE_COMMENTS
     )
-      .select()
-      .where(`${CommentDatabase.TABLE_COMMENTS}.post_id`, "=", `${id}`);
-
+      .select(
+        `${CommentDatabase.TABLE_COMMENTS}.*`,
+        `${UserDatabase.TABLE_USERS}.name as creator_name`
+      )
+      .where(`${CommentDatabase.TABLE_COMMENTS}.post_id`, "=", `${id}`)
+      .join(
+        `${UserDatabase.TABLE_USERS}`,
+        `${CommentDatabase.TABLE_COMMENTS}.creator_id`,
+        "=",
+        `${UserDatabase.TABLE_USERS}.id`
+      );
     return commentsDB;
   }
 

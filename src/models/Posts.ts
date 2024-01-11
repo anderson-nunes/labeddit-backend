@@ -7,6 +7,7 @@ export interface PostDB {
   created_at: string;
   updated_at: string;
   comments: number;
+  creator_name?: string;
 }
 export interface PostDBWithCreatorName {
   id: string;
@@ -17,7 +18,7 @@ export interface PostDBWithCreatorName {
   dislikes: number;
   created_at: string;
   updated_at: string;
-  // creator_name: string;
+  creator_name: string;
 }
 export interface PostModel {
   id: string;
@@ -29,7 +30,7 @@ export interface PostModel {
   comments: number;
   creator: {
     id: string;
-    // name: string;
+    name: string;
   };
 }
 export interface LikeDislikeDB {
@@ -51,7 +52,8 @@ export class Post {
     private comments: number,
     private createdAt: string,
     private updatedAt: string,
-    private creatorId: string
+    private creatorId: string,
+    private creatorName?: string
   ) {}
 
   public getId(): string {
@@ -134,6 +136,14 @@ export class Post {
     this.comments = value;
   }
 
+  public getCreatorName(): string {
+    return this.creatorName || "";
+  }
+
+  public setCreatorName(value: string): void {
+    this.creatorName = value;
+  }
+
   public toDBModel(): PostDB {
     return {
       id: this.id,
@@ -158,6 +168,7 @@ export class Post {
       comments: this.comments,
       creator: {
         id: this.creatorId,
+        name: this.creatorName || "",
       },
     };
   }

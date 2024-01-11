@@ -57,7 +57,8 @@ export class PostBusiness {
         postDB.comments,
         postDB.created_at,
         postDB.updated_at,
-        postDB.creator_id
+        postDB.creator_id,
+        postDB.creator_name
       );
 
       return post.toBusinissModel();
@@ -106,8 +107,6 @@ export class PostBusiness {
     const postDB = post.toDBModel();
 
     const response = await this.postDataBase.insertPost(postDB);
-
-    // const response: CreatePostOutputDTO = undefined;
 
     return response;
   };
@@ -195,22 +194,21 @@ export class PostBusiness {
       throw new BadRequestError("token não existe");
     }
 
-    const postDBWithCreatorName =
-      await this.postDataBase.findPostWithCreatorNameById(postId);
+    const postDB = await this.postDataBase.findPostById(postId);
 
-    if (!postDBWithCreatorName) {
+    if (!postDB) {
       throw new NotFoundError("post com essa id não existe");
     }
 
     const post = new Post(
-      postDBWithCreatorName.id,
-      postDBWithCreatorName.content,
-      postDBWithCreatorName.likes,
-      postDBWithCreatorName.dislikes,
-      postDBWithCreatorName.comments,
-      postDBWithCreatorName.created_at,
-      postDBWithCreatorName.updated_at,
-      postDBWithCreatorName.creator_id
+      postDB.id,
+      postDB.content,
+      postDB.likes,
+      postDB.dislikes,
+      postDB.comments,
+      postDB.created_at,
+      postDB.updated_at,
+      postDB.creator_id
     );
 
     const likeSQlite = like ? 1 : 0;
