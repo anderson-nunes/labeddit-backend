@@ -47,14 +47,14 @@ export class CommentBusiness {
     const commentsModel = commentsDB.map((commentDB: any) => {
       const comment = new Comment(
         commentDB.id,
-        commentDB.postId,
+        commentDB.post_id,
         commentDB.content,
         commentDB.likes,
         commentDB.dislikes,
-        commentDB.createdAt,
-        commentDB.updatedAt,
-        commentDB.creatorId,
-        commentDB.creatorName
+        commentDB.created_at,
+        commentDB.updated_at,
+        commentDB.creator_id,
+        commentDB.creator_name
       );
 
       return comment.toBusinessModel();
@@ -86,8 +86,7 @@ export class CommentBusiness {
       0,
       new Date().toISOString(),
       new Date().toISOString(),
-      payload.id,
-      payload.name
+      payload.id
     );
 
     const commentDB = comment.toDBModel();

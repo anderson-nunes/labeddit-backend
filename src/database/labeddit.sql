@@ -41,7 +41,7 @@ CREATE TABLE posts (
 );
 
 SELECT * FROM posts;
-DROP TABLE posts;
+-- DROP TABLE posts;
 
 CREATE TABLE comments (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE post_like_dislike (
     ON UPDATE CASCADE 
   FOREIGN KEY (post_id) REFERENCES posts(id)
     ON DELETE CASCADE 
-    ON UPDATE CASCADE 
+    ON UPDATE CASCADE
 );
 
 SELECT * FROM post_like_dislike;

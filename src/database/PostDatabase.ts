@@ -14,7 +14,17 @@ export class PostDatabase extends BaseDatabase {
   public async findPosts(): Promise<PostDB[]> {
     const postsDB: PostDB[] = await BaseDatabase.connection(
       PostDatabase.TABLE_POST
-    ).select();
+    )
+      .select(
+        `${PostDatabase.TABLE_POST}.*`,
+        `${UserDatabase.TABLE_USERS}.name as creator_name`
+      )
+      .join(
+        `${UserDatabase.TABLE_USERS}`,
+        `${PostDatabase.TABLE_POST}.creator_id`,
+        "=",
+        `${UserDatabase.TABLE_USERS}.id`
+      );
 
     return postsDB;
   }
@@ -91,15 +101,9 @@ export class PostDatabase extends BaseDatabase {
         `${PostDatabase.TABLE_POST}.likes`,
         `${PostDatabase.TABLE_POST}.dislikes`,
         `${PostDatabase.TABLE_POST}.created_at`,
-        `${PostDatabase.TABLE_POST}.updated_at`,
-        `${UserDatabase.TABLE_USERS}.name as creator_name`
+        `${PostDatabase.TABLE_POST}.updated_at`
       )
-      .join(
-        `${UserDatabase.TABLE_USERS}`,
-        `${PostDatabase.TABLE_POST}.creator_id`,
-        "=",
-        `${UserDatabase.TABLE_USERS}.id`
-      )
+
       .where({ [`${PostDatabase.TABLE_POST}.id`]: id });
 
     return result as PostDBWithCreatorName | undefined;

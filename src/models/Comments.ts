@@ -52,7 +52,7 @@ export class Comment {
     private createdAt: string,
     private updatedAt: string,
     private creatorId: string,
-    private creatorName: string
+    private creatorName?: string
   ) {}
 
   public getId(): string {
@@ -136,7 +136,7 @@ export class Comment {
   }
 
   public getCreatorName(): string {
-    return this.creatorName;
+    return this.creatorName || "";
   }
 
   public setCreatorName(value: string): void {
@@ -167,7 +167,7 @@ export class Comment {
       updatedAt: this.updatedAt,
       creator: {
         id: this.creatorId,
-        name: this.creatorName,
+        name: this.creatorName || "",
       },
     };
   }
