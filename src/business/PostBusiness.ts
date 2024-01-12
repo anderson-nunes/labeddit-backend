@@ -1,4 +1,4 @@
-import { LikeDislikeDB, POST_LIKE } from "../models/Posts";
+import { LikeDislikeDB, POST_LIKE, PostDB } from "../models/Posts";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { PostDatabase } from "../database/PostDatabase";
@@ -28,6 +28,13 @@ import {
   LikeOrDislikePostOutputDTO,
 } from "../dtos/posts/likeOrDislikePost.dto";
 
+function checkRating(rating?: POST_LIKE | null) {
+  if (rating === POST_LIKE.ALREADY_LIKED) return true;
+  if (rating === POST_LIKE.ALREADY_DISLIKED) return false;
+
+  return null;
+}
+
 export class PostBusiness {
   constructor(
     private postDataBase: PostDatabase,
@@ -46,27 +53,40 @@ export class PostBusiness {
       throw new BadRequestError("Token inválido");
     }
 
+    let posts = [];
+
     const postsDB = await this.postDataBase.findPosts();
 
-    const postModel = postsDB.map((postDB) => {
-      const post = new Post(
-        postDB.id,
-        postDB.content,
-        postDB.likes,
-        postDB.dislikes,
-        postDB.comments,
-        postDB.created_at,
-        postDB.updated_at,
-        postDB.creator_id,
-        postDB.creator_name
+    for (const post of postsDB) {
+      const likeDislikeByPost = await this.postDataBase.findLikeDislike({
+        post_id: post.id,
+        user_id: payload.id,
+        like: 0,
+      });
+
+      const parsedPost: PostDB = {
+        ...post,
+        rating: checkRating(likeDislikeByPost),
+      };
+
+      const postDB = new Post(
+        parsedPost.id,
+        parsedPost.content,
+        parsedPost.likes,
+        parsedPost.dislikes,
+        parsedPost.comments,
+        parsedPost.created_at,
+        parsedPost.updated_at,
+        parsedPost.creator_id,
+        parsedPost.creator_name,
+        parsedPost.rating
       );
 
-      return post.toBusinissModel();
-    });
+      const postModel = postDB.toBusinissModel();
+      posts.push(postModel);
+    }
 
-    const response: GetPostsOutputDTO = postModel;
-
-    return response;
+    return posts;
   };
 
   public createPost = async (
@@ -82,17 +102,6 @@ export class PostBusiness {
 
     const id = this.IdGenerator.generate();
 
-    console.log("@post", {
-      id,
-      content,
-      likes: 0,
-      dislikes: 0,
-      comments: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      creatorId: payload.id,
-    });
-
     const post = new Post(
       id,
       content,
@@ -106,9 +115,9 @@ export class PostBusiness {
 
     const postDB = post.toDBModel();
 
-    const response = await this.postDataBase.insertPost(postDB);
+    await this.postDataBase.insertPost(postDB);
 
-    return response;
+    return postDB;
   };
 
   public updatePost = async (

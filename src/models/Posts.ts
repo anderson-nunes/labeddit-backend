@@ -8,6 +8,7 @@ export interface PostDB {
   updated_at: string;
   comments: number;
   creator_name?: string;
+  rating?: boolean | null;
 }
 export interface PostDBWithCreatorName {
   id: string;
@@ -19,6 +20,7 @@ export interface PostDBWithCreatorName {
   created_at: string;
   updated_at: string;
   creator_name: string;
+  rating: boolean | null;
 }
 export interface PostModel {
   id: string;
@@ -28,6 +30,7 @@ export interface PostModel {
   createdAt: string;
   updatedAt: string;
   comments: number;
+  rating?: boolean | null;
   creator: {
     id: string;
     name: string;
@@ -53,7 +56,8 @@ export class Post {
     private createdAt: string,
     private updatedAt: string,
     private creatorId: string,
-    private creatorName?: string
+    private creatorName?: string,
+    private rating?: boolean | null
   ) {}
 
   public getId(): string {
@@ -144,6 +148,14 @@ export class Post {
     this.creatorName = value;
   }
 
+  public getRating(): boolean | null {
+    return this.rating || null;
+  }
+
+  public setRating(value: boolean | null): void {
+    this.rating = value;
+  }
+
   public toDBModel(): PostDB {
     return {
       id: this.id,
@@ -154,6 +166,7 @@ export class Post {
       created_at: this.createdAt,
       updated_at: this.updatedAt,
       comments: this.comments,
+      rating: this.rating,
     };
   }
 
@@ -166,6 +179,7 @@ export class Post {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       comments: this.comments,
+      rating: this.rating,
       creator: {
         id: this.creatorId,
         name: this.creatorName || "",

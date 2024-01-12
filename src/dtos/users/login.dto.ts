@@ -6,6 +6,9 @@ export interface LoginUserInputDTO {
 
 export interface LoginUserOutputDTO {
   message: string;
+  id: string;
+  name: string;
+  email: string;
   token: string;
 }
 

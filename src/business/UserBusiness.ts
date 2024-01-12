@@ -144,6 +144,9 @@ export class UserBusiness {
 
     const response: LoginUserOutputDTO = {
       message: "Login realizado com sucesso",
+      id: userDB.id,
+      name: userDB.name,
+      email: userDB.email,
       token,
     };
 

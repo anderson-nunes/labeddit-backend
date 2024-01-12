@@ -24,31 +24,9 @@ export class PostDatabase extends BaseDatabase {
         `${PostDatabase.TABLE_POST}.creator_id`,
         "=",
         `${UserDatabase.TABLE_USERS}.id`
-      );
-
-    return postsDB;
-  }
-
-  public async findPostsWithCreatorName(): Promise<PostDBWithCreatorName[]> {
-    const postsDB: PostDBWithCreatorName[] = await BaseDatabase.connection(
-      PostDatabase.TABLE_POST
-    )
-      .select(
-        `${PostDatabase.TABLE_POST}.id`,
-        `${PostDatabase.TABLE_POST}.creator_id`,
-        `${PostDatabase.TABLE_POST}.content`,
-        `${PostDatabase.TABLE_POST}.likes`,
-        `${PostDatabase.TABLE_POST}.dislikes`,
-        `${PostDatabase.TABLE_POST}.created_at`,
-        `${PostDatabase.TABLE_POST}.updated_at`,
-        `${UserDatabase.TABLE_USERS}.name as creator_name`
       )
-      .join(
-        `${UserDatabase.TABLE_USERS}`,
-        `${PostDatabase.TABLE_POST}.creator_id`,
-        "=",
-        `${UserDatabase.TABLE_USERS}.id`
-      );
+
+      .orderBy("created_at", "desc");
     return postsDB;
   }
 
@@ -89,25 +67,6 @@ export class PostDatabase extends BaseDatabase {
       .where({ id })
       .delete();
   }
-
-  public findPostWithCreatorNameById = async (
-    id: string
-  ): Promise<PostDBWithCreatorName | undefined> => {
-    const [result] = await BaseDatabase.connection(PostDatabase.TABLE_POST)
-      .select(
-        `${PostDatabase.TABLE_POST}.id`,
-        `${PostDatabase.TABLE_POST}.creator_id`,
-        `${PostDatabase.TABLE_POST}.content`,
-        `${PostDatabase.TABLE_POST}.likes`,
-        `${PostDatabase.TABLE_POST}.dislikes`,
-        `${PostDatabase.TABLE_POST}.created_at`,
-        `${PostDatabase.TABLE_POST}.updated_at`
-      )
-
-      .where({ [`${PostDatabase.TABLE_POST}.id`]: id });
-
-    return result as PostDBWithCreatorName | undefined;
-  };
 
   public findLikeDislike = async (
     likeDislikeDB: LikeDislikeDB
