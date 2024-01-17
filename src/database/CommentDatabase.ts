@@ -87,9 +87,9 @@ export class CommentDatabase extends BaseDatabase {
     if (result === undefined) {
       return undefined;
     } else if (result.like === 1) {
-      return COMMENT_LIKES.LIKED;
+      return COMMENT_LIKES.ALREADY_LIKED;
     } else {
-      return COMMENT_LIKES.DISLIKED;
+      return COMMENT_LIKES.ALREADY_DISLIKED;
     }
   };
 

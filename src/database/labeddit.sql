@@ -11,11 +11,6 @@ CREATE TABLE users (
 SELECT * FROM users;
 DROP TABLE users;
 
--- INSERT INTO users(id, name, email, password, role)
--- VALUES
--- ('u001', 'Anderson', 'anderson@email.com', 'and123', 'ADMIN'),
--- ('u002', 'Patricia', 'patricia@email.com', 'pati123', 'NORMAL');
-
 INSERT INTO users (id, name, email, password, role)
 VALUES
   -- conta NORMAL e senha = "fulano123"
@@ -40,8 +35,12 @@ CREATE TABLE posts (
     ON UPDATE CASCADE
 );
 
+ALTER TABLE posts ADD COLUMN rating INTEGER;
+-- código adicionado pois a rating não existia na tabela posts
+
+
 SELECT * FROM posts;
--- DROP TABLE posts;
+DROP TABLE posts;
 
 CREATE TABLE comments (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,

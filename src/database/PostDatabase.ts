@@ -1,15 +1,14 @@
+import { PostDB } from "../models/Posts";
 import { BaseDatabase } from "./BaseDatabase";
 import { UserDatabase } from "./UserDatabase";
-import { PostDB } from "../models/Posts";
-import {
-  LikeDislikeDB,
-  POST_LIKE,
-  PostDBWithCreatorName,
-} from "../models/Posts";
+import { LikeDislikeDB, POST_LIKE } from "../models/Posts";
+import { COMMENT_LIKES, LikeDislikeCommentDB } from "../models/Comments";
+import { CommentDatabase } from "./CommentDatabase";
 
 export class PostDatabase extends BaseDatabase {
   public static TABLE_POST = "posts";
   public static TABLE_LIKES_DISLIKES = "post_like_dislike";
+  public static TABLE_COMMENTS = "comments";
 
   public async findPosts(): Promise<PostDB[]> {
     const postsDB: PostDB[] = await BaseDatabase.connection(
@@ -38,6 +37,25 @@ export class PostDatabase extends BaseDatabase {
       .where({ id });
 
     return postsDB;
+  }
+
+  public async findCommentByPostId(id: string): Promise<any> {
+    const commentsDB: any = await BaseDatabase.connection(
+      PostDatabase.TABLE_COMMENTS
+    )
+      .select(
+        `${PostDatabase.TABLE_COMMENTS}.*`,
+        `${UserDatabase.TABLE_USERS}.name as creator_name`
+      )
+      .where(`${PostDatabase.TABLE_COMMENTS}.post_id`, "=", `${id}`)
+      .join(
+        `${UserDatabase.TABLE_USERS}`,
+        `${PostDatabase.TABLE_COMMENTS}.creator_id`,
+        "=",
+        `${UserDatabase.TABLE_USERS}.id`
+      )
+      .orderBy("created_at", "desc");
+    return commentsDB;
   }
 
   public insertPost = async (postDB: PostDB): Promise<void> => {
@@ -85,6 +103,28 @@ export class PostDatabase extends BaseDatabase {
       return POST_LIKE.ALREADY_LIKED;
     } else {
       return POST_LIKE.ALREADY_DISLIKED;
+    }
+  };
+
+  public findLikeDislikeComment = async (
+    likeDislikeDB: LikeDislikeCommentDB
+  ): Promise<COMMENT_LIKES | undefined> => {
+    const [result]: Array<LikeDislikeCommentDB | undefined> =
+      await BaseDatabase.connection(
+        CommentDatabase.TABLE_LIKES_DISLIKES_COMMENTS
+      )
+        .select()
+        .where({
+          user_id: likeDislikeDB.user_id,
+          comment_id: likeDislikeDB.comment_id,
+        });
+
+    if (result === undefined) {
+      return undefined;
+    } else if (result.like === 1) {
+      return COMMENT_LIKES.ALREADY_LIKED;
+    } else {
+      return COMMENT_LIKES.ALREADY_DISLIKED;
     }
   };
 
