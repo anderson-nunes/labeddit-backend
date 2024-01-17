@@ -115,7 +115,7 @@ export class PostBusiness {
       });
 
       const commentsDB = await this.postDataBase.findCommentByPostId(id);
-      let comments = [];
+      let commentList = [];
 
       for (const comment of commentsDB) {
         const likeDislikeByPost =
@@ -130,12 +130,12 @@ export class PostBusiness {
           rating: checkRating(likeDislikeByPost),
         };
 
-        comments.push(parsedComment);
+        commentList.push(parsedComment);
       }
 
       const parsedPost: any = {
         ...post,
-        comments,
+        commentList,
         rating: checkRating(likeDislikeByPost),
       };
 
@@ -149,7 +149,8 @@ export class PostBusiness {
         parsedPost.updated_at,
         parsedPost.creator_id,
         parsedPost.creator_name,
-        parsedPost.rating
+        parsedPost.rating,
+        parsedPost.commentList
       );
 
       const postModel = postDB.toBusinissModel();

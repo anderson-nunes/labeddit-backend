@@ -31,6 +31,7 @@ export interface PostModel {
   updatedAt: string;
   comments: number;
   rating?: boolean | null;
+  commentList?: any[];
   creator: {
     id: string;
     name: string;
@@ -57,7 +58,8 @@ export class Post {
     private updatedAt: string,
     private creatorId: string,
     private creatorName?: string,
-    private rating?: boolean | null
+    private rating?: boolean | null,
+    private commentList?: any[]
   ) {}
 
   public getId(): string {
@@ -179,6 +181,7 @@ export class Post {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       comments: this.comments,
+      commentList: this.commentList,
       rating: this.rating,
       creator: {
         id: this.creatorId,
