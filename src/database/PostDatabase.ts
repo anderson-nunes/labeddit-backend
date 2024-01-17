@@ -33,8 +33,17 @@ export class PostDatabase extends BaseDatabase {
     const [postsDB]: PostDB[] | undefined[] = await BaseDatabase.connection(
       PostDatabase.TABLE_POST
     )
-      .select()
-      .where({ id });
+      .select(
+        `${PostDatabase.TABLE_POST}.*`,
+        `${UserDatabase.TABLE_USERS}.name as creator_name`
+      )
+      .where(`${PostDatabase.TABLE_POST}.id`, "=", `${id}`)
+      .join(
+        `${UserDatabase.TABLE_USERS}`,
+        `${PostDatabase.TABLE_POST}.creator_id`,
+        "=",
+        `${UserDatabase.TABLE_USERS}.id`
+      );
 
     return postsDB;
   }
