@@ -27,8 +27,13 @@ import {
   LikeOrDislikePostInputDTO,
   LikeOrDislikePostOutputDTO,
 } from "../dtos/posts/likeOrDislikePost.dto";
+import {
+  GetPostByIdInputDTO,
+  GetPostByIdOutputDTO,
+} from "../dtos/posts/getPostById.dto";
+import { COMMENT_LIKES, CommentDB } from "../models/Comments";
 
-function checkRating(rating?: POST_LIKE | null) {
+function checkRating(rating?: POST_LIKE | COMMENT_LIKES | null) {
   if (rating === POST_LIKE.ALREADY_LIKED) return true;
   if (rating === POST_LIKE.ALREADY_DISLIKED) return false;
 
@@ -87,6 +92,72 @@ export class PostBusiness {
     }
 
     return posts;
+  };
+
+  public getPostById = async (
+    input: GetPostByIdInputDTO
+  ): Promise<GetPostByIdOutputDTO> => {
+    const { token, id } = input;
+
+    const payload = this.tokenManager.getPayload(token);
+
+    if (!payload) {
+      throw new BadRequestError("Token inválido");
+    }
+
+    const post = await this.postDataBase.findPostById(id);
+
+    if (post) {
+      const likeDislikeByPost = await this.postDataBase.findLikeDislike({
+        post_id: id,
+        user_id: payload.id,
+        like: 0,
+      });
+
+      const commentsDB = await this.postDataBase.findCommentByPostId(id);
+      let comments = [];
+
+      for (const comment of commentsDB) {
+        const likeDislikeByPost =
+          await this.postDataBase.findLikeDislikeComment({
+            user_id: payload.id,
+            comment_id: comment.id,
+            like: 0,
+          });
+
+        const parsedComment: CommentDB = {
+          ...comment,
+          rating: checkRating(likeDislikeByPost),
+        };
+
+        comments.push(parsedComment);
+      }
+
+      const parsedPost: any = {
+        ...post,
+        comments,
+        rating: checkRating(likeDislikeByPost),
+      };
+
+      const postDB = new Post(
+        parsedPost.id,
+        parsedPost.content,
+        parsedPost.likes,
+        parsedPost.dislikes,
+        parsedPost.comments,
+        parsedPost.created_at,
+        parsedPost.updated_at,
+        parsedPost.creator_id,
+        parsedPost.creator_name,
+        parsedPost.rating
+      );
+
+      const postModel = postDB.toBusinissModel();
+
+      return postModel;
+    }
+
+    return null;
   };
 
   public createPost = async (

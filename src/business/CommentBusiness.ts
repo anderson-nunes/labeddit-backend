@@ -93,6 +93,8 @@ export class CommentBusiness {
     await this.commentsDatabase.insertComment(commentDB);
 
     await this.postDataBase.updateCommentNumber(postId);
+
+    return commentDB;
   };
 
   public likeOrDislikeComment = async (
@@ -137,7 +139,7 @@ export class CommentBusiness {
       likeDislikeDB
     );
 
-    if (likeDislikeExists === COMMENT_LIKES.LIKED) {
+    if (likeDislikeExists === COMMENT_LIKES.ALREADY_LIKED) {
       if (like) {
         await this.commentsDatabase.removeLikeDislike(likeDislikeDB);
         post.removeLike();
@@ -146,7 +148,7 @@ export class CommentBusiness {
         post.removeLike();
         post.addDislike();
       }
-    } else if (likeDislikeExists === COMMENT_LIKES.DISLIKED) {
+    } else if (likeDislikeExists === COMMENT_LIKES.ALREADY_DISLIKED) {
       if (like === false) {
         await this.commentsDatabase.removeLikeDislike(likeDislikeDB);
         post.removeDislike();

@@ -7,6 +7,10 @@ import { UpdatePostSchema } from "../dtos/posts/updatePost.dto";
 import { PostBusiness } from "../business/PostBusiness";
 import { BaseError } from "../errors/BaseError";
 import { ZodError } from "zod";
+import {
+  GetPostByIdInputDTO,
+  GetPostByIdSchema,
+} from "../dtos/posts/getPostById.dto";
 
 export class PostController {
   constructor(private postBusiness: PostBusiness) {}
@@ -18,6 +22,27 @@ export class PostController {
       });
 
       const response = await this.postBusiness.getPosts(input);
+
+      res.status(200).send(response);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
+    }
+  };
+
+  public getPostById = async (req: Request, res: Response) => {
+    try {
+      const input: GetPostByIdInputDTO = GetPostByIdSchema.parse({
+        token: req.headers.authorization,
+        id: req.params.id,
+      });
+
+      const response = await this.postBusiness.getPostById(input);
 
       res.status(200).send(response);
     } catch (error) {

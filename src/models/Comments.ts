@@ -7,6 +7,7 @@ export interface CommentDB {
   dislikes: number;
   created_at: string;
   updated_at: string;
+  comments?: any[];
 }
 export interface CommentDBWithCreatorName {
   id: string;
@@ -39,8 +40,8 @@ export interface LikeDislikeCommentDB {
 }
 
 export enum COMMENT_LIKES {
-  LIKED = "ALREADY LIKED",
-  DISLIKED = "ALREADY DISLIKED",
+  ALREADY_LIKED = "ALREADY LIKED",
+  ALREADY_DISLIKED = "ALREADY DISLIKED",
 }
 export class Comment {
   constructor(
