@@ -189,7 +189,13 @@ export class PostBusiness {
 
     await this.postDataBase.insertPost(postDB);
 
-    return postDB;
+    return {
+      ...postDB,
+      creator: {
+        id: postDB.created_at,
+        name: payload.name,
+      },
+    };
   };
 
   public updatePost = async (
