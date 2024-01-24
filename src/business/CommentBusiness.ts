@@ -94,7 +94,13 @@ export class CommentBusiness {
 
     await this.postDataBase.updateCommentNumber(postId);
 
-    return commentDB;
+    return {
+      ...commentDB,
+      creator: {
+        id: commentDB.created_at,
+        name: payload.name,
+      },
+    };
   };
 
   public likeOrDislikeComment = async (
