@@ -22,9 +22,13 @@ describe("Testando login", () => {
     });
 
     const output = await userBusiness.login(input);
+    console.log(output);
 
     expect(output).toEqual({
       message: "Login realizado com sucesso",
+      id: "id-mock-fulano",
+      name: "Fulano",
+      email: "fulano@email.com",
       token: "token-mock-fulano",
     });
   });
