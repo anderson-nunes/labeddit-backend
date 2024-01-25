@@ -1,10 +1,6 @@
 import { BaseDatabase } from "../../src/database/BaseDatabase";
-import { usersMock } from "./UserDatabaseMock";
-import { UserDB } from "../../src/database/UserDatabase";
-import { CommentDB, commentDBMock } from "./CommentDatabaseMock";
-import { PostDatabase } from "../../src/database/PostDatabase";
+import { commentDBMock, commentLikeOrDislikeDB } from "./CommentDatabaseMock";
 import { LikeDislikeDB, POST_LIKE } from "../../src/models/Posts";
-import { CommentDatabase } from "../../src/database/CommentDatabase";
 import { COMMENT_LIKES, LikeDislikeCommentDB } from "../../src/models/Comments";
 
 export interface PostDB {
@@ -27,7 +23,7 @@ export interface postLikeOrDislikeDB {
 export const postDBMock: PostDB[] = [
   {
     id: "id-mock",
-    creator_id: "id-mock",
+    creator_id: "id-mock-fulano",
     content: "post-mock",
     likes: 10,
     dislikes: 10,
@@ -39,13 +35,26 @@ export const postDBMock: PostDB[] = [
 
 const postUpvoteDownvoteDBMock: postLikeOrDislikeDB[] = [
   {
-    post_id: "id-mock-1",
-    user_id: "id-mock",
+    post_id: "id-mock",
+    user_id: "id-mock-fulano",
     like: 1,
   },
   {
     post_id: "id-mock-2",
-    user_id: "id-mock",
+    user_id: "id-mock-fulano",
+    like: 0,
+  },
+];
+
+const commentUpvoteDownvoteDBMock: commentLikeOrDislikeDB[] = [
+  {
+    comment_id: "id-mock-1",
+    user_id: "id-mock-fulano",
+    like: 1,
+  },
+  {
+    comment_id: "id-mock-2",
+    user_id: "id-mock-fulano",
     like: 0,
   },
 ];
@@ -75,25 +84,45 @@ export class PostDatabaseMock extends BaseDatabase {
   }
 
   public async insertPost(post: PostDB): Promise<void> {
-    await BaseDatabase.connection(PostDatabaseMock.TABLE_POST).insert(post);
+    postDBMock.push(post);
   }
 
-  public async updateCommentNumber(ipostId: string): Promise<void> {}
+  public async updateCommentNumber(postId: string): Promise<void> {
+    const index = postDBMock.findIndex((post) => post.id === postId);
 
-  public async updatePost(postDB: PostDB): Promise<void> {}
+    if (index !== -1) {
+      postDBMock[index].comments = +1;
+      const updatedPost = postDBMock.splice(index, 1)[0];
+      postDBMock.splice(index, 0, updatedPost);
+    }
+  }
 
-  public async deletePost(id: string): Promise<void> {}
+  public async updatePost(postDB: PostDB): Promise<void> {
+    const index = postDBMock.findIndex((post) => post.id === postDB.id);
+
+    if (index !== -1) {
+      const updatedPost = postDBMock.splice(index, 1)[0];
+      postDBMock.splice(index, 0, updatedPost);
+    }
+  }
+
+  public async deletePost(id: string): Promise<void> {
+    const index = postDBMock.findIndex((post) => post.id === id);
+
+    if (index !== -1) {
+      postDBMock.splice(index, 1);
+    }
+  }
 
   public findLikeDislike = async (
     likeDislikeDB: LikeDislikeDB
   ): Promise<POST_LIKE | undefined> => {
     const [result]: Array<LikeDislikeDB | undefined> =
-      await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES)
-        .select()
-        .where({
-          user_id: likeDislikeDB.user_id,
-          post_id: likeDislikeDB.post_id,
-        });
+      postUpvoteDownvoteDBMock.filter(
+        (post) =>
+          post.post_id === likeDislikeDB.post_id &&
+          post.user_id === likeDislikeDB.user_id
+      );
 
     if (result === undefined) {
       return undefined;
@@ -108,14 +137,11 @@ export class PostDatabaseMock extends BaseDatabase {
     likeDislikeDB: LikeDislikeCommentDB
   ): Promise<COMMENT_LIKES | undefined> => {
     const [result]: Array<LikeDislikeCommentDB | undefined> =
-      await BaseDatabase.connection(
-        CommentDatabase.TABLE_LIKES_DISLIKES_COMMENTS
-      )
-        .select()
-        .where({
-          user_id: likeDislikeDB.user_id,
-          comment_id: likeDislikeDB.comment_id,
-        });
+      commentUpvoteDownvoteDBMock.filter(
+        (comment) =>
+          comment.comment_id === likeDislikeDB.comment_id &&
+          comment.user_id === likeDislikeDB.user_id
+      );
 
     if (result === undefined) {
       return undefined;
@@ -127,22 +153,25 @@ export class PostDatabaseMock extends BaseDatabase {
   };
 
   public async removeLikeDislike(item: postLikeOrDislikeDB): Promise<void> {
-    await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES)
-      .del()
-      .where({
-        user_id: item.user_id,
-        post_id: item.post_id,
-      });
+    const index = postDBMock.findIndex((post) => post.id === item.post_id);
+
+    if (index !== -1) {
+      postDBMock.splice(index, 1);
+    }
   }
 
   public async updateLikeDislike(item: postLikeOrDislikeDB): Promise<void> {
-    await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES)
-      .update(item)
-      .where({
-        user_id: item.user_id,
-        post_id: item.post_id,
-      });
+    const index = postDBMock.findIndex(
+      (post) => post.id === item.post_id && item.user_id
+    );
+
+    if (index !== -1) {
+      const updatedPost = postDBMock.splice(index, 1)[0];
+      postDBMock.splice(index, 0, updatedPost);
+    }
   }
 
-  public async insertLikeDislike(likeDislikeDB: LikeDislikeDB): Promise<void> {}
+  public async insertLikeDislike(likeDislikeDB: LikeDislikeDB): Promise<void> {
+    postUpvoteDownvoteDBMock.push(likeDislikeDB);
+  }
 }

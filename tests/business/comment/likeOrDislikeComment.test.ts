@@ -4,57 +4,39 @@ import { PostDatabaseMock } from "../../mocks/PostDatabaseMock";
 import { IdGeneratorMock } from "../../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../../mocks/TokenManagerMock";
 import { BadRequestError } from "../../../src/errors/BadRequestError";
-import { NotFoundError } from "../../../src/errors/NotFoundError";
+import { LikeOrDislikeCommentSchema } from "../../../src/dtos/comments/likeOrDislikeComments.dto";
 
 describe("upvoteOrDownvoteComment", () => {
   const commentBusiness = new CommentBusiness(
     new CommentDatabaseMock(),
-    new PostDatabaseMock(),
     new IdGeneratorMock(),
-    new TokenManagerMock()
+    new TokenManagerMock(),
+    new PostDatabaseMock()
   );
 
-  it("success", async () => {
-    const input = {
-      idToVote: "id-mock",
-      token: "token-mock-normal",
-      vote: true,
-    };
+  test("success", async () => {
+    const input = LikeOrDislikeCommentSchema.parse({
+      commentId: "id-mock",
+      token: "token-mock-fulano",
+      like: true,
+    });
 
     await commentBusiness.likeOrDislikeComment(input);
   });
 
-  it("error test: id not found", async () => {
+  test("error test: login failed", async () => {
     expect.assertions(2);
     try {
-      const input = {
-        idToVote: "xxx",
-        token: "token-mock-normal",
-        vote: true,
-      };
-
-      await commentBusiness.upvoteOrDownvoteComment(input);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        expect(error.message).toBe("ERROR: 'idToVote' not found");
-        expect(error.statusCode).toBe(404);
-      }
-    }
-  });
-
-  it("error test: login failed", async () => {
-    expect.assertions(2);
-    try {
-      const input = {
-        idToVote: "id-mock",
+      const input = LikeOrDislikeCommentSchema.parse({
+        commentId: "id-mock",
         token: "xxx",
-        vote: true,
-      };
+        like: true,
+      });
 
-      await commentBusiness.upvoteOrDownvoteComment(input);
+      await commentBusiness.likeOrDislikeComment(input);
     } catch (error) {
       if (error instanceof BadRequestError) {
-        expect(error.message).toBe("ERROR: Login failed.");
+        expect(error.message).toBe("token não existe");
         expect(error.statusCode).toBe(400);
       }
     }

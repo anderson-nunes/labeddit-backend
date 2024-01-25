@@ -168,7 +168,6 @@ export class Post {
       created_at: this.createdAt,
       updated_at: this.updatedAt,
       comments: this.comments,
-      rating: this.rating,
     };
   }
 

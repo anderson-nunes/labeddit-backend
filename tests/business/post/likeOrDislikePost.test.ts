@@ -4,6 +4,7 @@ import { IdGeneratorMock } from "../../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../../mocks/TokenManagerMock";
 import { BadRequestError } from "../../../src/errors/BadRequestError";
 import { NotFoundError } from "../../../src/errors/NotFoundError";
+import { LikeOrDislikePostSchema } from "../../../src/dtos/posts/likeOrDislikePost.dto";
 
 describe("upvoteOrDownvotePost", () => {
   const postBusiness = new PostBusiness(
@@ -12,47 +13,49 @@ describe("upvoteOrDownvotePost", () => {
     new TokenManagerMock()
   );
 
-  it("success", async () => {
-    const input = {
-      idToLike: "id-mock",
-      token: "token-mock-normal",
+  test("success", async () => {
+    const input = LikeOrDislikePostSchema.parse({
+      postId: "id-mock",
+      token: "token-mock-fulano",
       like: true,
-    };
+    });
 
-    await postBusiness.updatePost(input);
+    const output = await postBusiness.likeOrDislikePost(input);
+
+    expect(output).toEqual(undefined);
   });
 
-  it("error test: id not found", async () => {
+  test("error test: id not found", async () => {
     expect.assertions(2);
     try {
-      const input = {
-        idToLike: "xxx",
-        token: "token-mock-normal",
+      const input = LikeOrDislikePostSchema.parse({
+        postId: "id-mock-falha",
+        token: "token-mock-fulano",
         like: true,
-      };
+      });
 
-      await postBusiness.updatePost(input);
+      await postBusiness.likeOrDislikePost(input);
     } catch (error) {
       if (error instanceof NotFoundError) {
-        expect(error.message).toBe("ERROR: 'idToVote' not found");
+        expect(error.message).toBe("post com essa id não existe");
         expect(error.statusCode).toBe(404);
       }
     }
   });
 
-  it("error test: login failed", async () => {
+  test("error test: login failed", async () => {
     expect.assertions(2);
     try {
-      const input = {
-        idToLike: "id-mock",
-        token: "xxx",
+      const input = LikeOrDislikePostSchema.parse({
+        postId: "id-mock",
+        token: "token-mock-falho",
         like: true,
-      };
+      });
 
-      await postBusiness.updatePost(input);
+      await postBusiness.likeOrDislikePost(input);
     } catch (error) {
       if (error instanceof BadRequestError) {
-        expect(error.message).toBe("ERROR: Login failed.");
+        expect(error.message).toBe("token não existe");
         expect(error.statusCode).toBe(400);
       }
     }

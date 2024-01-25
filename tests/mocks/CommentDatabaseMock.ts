@@ -1,6 +1,5 @@
 import { BaseDatabase } from "../../src/database/BaseDatabase";
 import { COMMENT_LIKES } from "../../src/models/Comments";
-import { PostDB, postDBMock } from "./PostDatabaseMock";
 
 export interface CommentDB {
   id: string;
@@ -63,7 +62,9 @@ export class CommentDatabaseMock extends BaseDatabase {
   public static TABLE_COMMENTS = "comments";
   public static TABLE_LIKES_DISLIKES_COMMENTS = "comment_like_dislike";
 
-  public async insertComment(commentDB: CommentDB): Promise<void> {}
+  public async insertComment(comment: CommentDB): Promise<void> {
+    commentDBMock.push(comment);
+  }
 
   public async findCommentByPostId(id: string): Promise<any> {
     const result: any = commentDBMock.filter(
@@ -73,7 +74,13 @@ export class CommentDatabaseMock extends BaseDatabase {
     return result;
   }
 
-  public async findCommentWithCreatorNameById(id: string): Promise<any> {}
+  public async findCommentWithCreatorNameById(id: string): Promise<any> {
+    const result: any = commentDBMock.filter(
+      (comment) => comment.post_id === id
+    );
+
+    return result;
+  }
 
   public async findComments(): Promise<CommentDB[]> {
     return commentDBMock;
@@ -95,13 +102,41 @@ export class CommentDatabaseMock extends BaseDatabase {
     }
   }
 
-  public async removeLikeDislike(item: commentLikeOrDislikeDB): Promise<void> {}
+  public async removeLikeDislike(item: commentLikeOrDislikeDB): Promise<void> {
+    const index = commentDBMock.findIndex(
+      (comment) => comment.id === item.comment_id
+    );
 
-  public async updateLikeDislike(item: commentLikeOrDislikeDB): Promise<void> {}
+    if (index !== -1) {
+      commentDBMock.splice(index, 1);
+    }
+  }
+
+  public async updateLikeDislike(item: commentLikeOrDislikeDB): Promise<void> {
+    const index = commentDBMock.findIndex(
+      (comment) => comment.id === item.comment_id && item.user_id
+    );
+
+    if (index !== -1) {
+      const updatedComment = commentDBMock.splice(index, 1)[0];
+      commentDBMock.splice(index, 0, updatedComment);
+    }
+  }
 
   public async insertLikeDislike(
     LikeOrDislikeDB: commentLikeOrDislikeDB
-  ): Promise<void> {}
+  ): Promise<void> {
+    commentUpvoteDownvoteDBMock.push(LikeOrDislikeDB);
+  }
 
-  public async updateComment(commentDB: CommentDB): Promise<void> {}
+  public async updateComment(commentDB: CommentDB): Promise<void> {
+    const index = commentDBMock.findIndex(
+      (comment) => comment.id === commentDB.id
+    );
+
+    if (index !== -1) {
+      const updatedPost = commentDBMock.splice(index, 1)[0];
+      commentDBMock.splice(index, 0, updatedPost);
+    }
+  }
 }

@@ -3,6 +3,7 @@ import { PostDatabaseMock } from "../../mocks/PostDatabaseMock";
 import { IdGeneratorMock } from "../../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../../mocks/TokenManagerMock";
 import { BadRequestError } from "../../../src/errors/BadRequestError";
+import { CreatePostSchema } from "../../../src/dtos/posts/createPost.dto";
 
 describe("createPost", () => {
   const postBusiness = new PostBusiness(
@@ -11,46 +12,27 @@ describe("createPost", () => {
     new TokenManagerMock()
   );
 
-  it("success", async () => {
-    const input = {
-      token: "token-mock-normal",
+  test("success", async () => {
+    const input = CreatePostSchema.parse({
       content: "content-test",
-    };
+      token: "token-mock-fulano",
+    });
 
     await postBusiness.createPost(input);
   });
 
-  it("error test: login failed", async () => {
+  test("error test: login failed", async () => {
     expect.assertions(2);
     try {
-      const input = {
+      const input = CreatePostSchema.parse({
+        content: "content-error",
         token: "xxx",
-        content: "content-test",
-      };
+      });
 
       await postBusiness.createPost(input);
     } catch (error) {
       if (error instanceof BadRequestError) {
-        expect(error.message).toBe("ERROR: Login failed.");
-        expect(error.statusCode).toBe(400);
-      }
-    }
-  });
-
-  it("error test: max content length", async () => {
-    expect.assertions(2);
-    try {
-      const input = {
-        token: "token-mock-normal",
-        content: "xxx",
-      };
-
-      await postBusiness.createPost(input);
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        expect(error.message).toBe(
-          "ERROR: The maximum post length is 280 characters."
-        );
+        expect(error.message).toBe("Token inválido");
         expect(error.statusCode).toBe(400);
       }
     }

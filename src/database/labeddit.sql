@@ -35,9 +35,6 @@ CREATE TABLE posts (
     ON UPDATE CASCADE
 );
 
-ALTER TABLE posts ADD COLUMN rating INTEGER;
--- código adicionado pois a rating não existia na tabela posts
-
 
 SELECT * FROM posts;
 DROP TABLE posts;

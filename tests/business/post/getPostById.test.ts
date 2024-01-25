@@ -3,8 +3,7 @@ import { PostDatabaseMock } from "../../mocks/PostDatabaseMock";
 import { IdGeneratorMock } from "../../mocks/IdGeneratorMock";
 import { TokenManagerMock } from "../../mocks/TokenManagerMock";
 import { BadRequestError } from "../../../src/errors/BadRequestError";
-import { NotFoundError } from "../../../src/errors/NotFoundError";
-import { UserDatabaseMock } from "../../mocks/UserDatabaseMock";
+import { GetPostByIdSchema } from "../../../src/dtos/posts/getPostById.dto";
 
 describe("getPostById", () => {
   const postBusiness = new PostBusiness(
@@ -13,64 +12,52 @@ describe("getPostById", () => {
     new TokenManagerMock()
   );
 
-  it("success", async () => {
-    const input = {
+  test("success", async () => {
+    const input = GetPostByIdSchema.parse({
+      token: "token-mock-fulano",
       id: "id-mock",
-      token: "token-mock-normal",
-    };
+    });
 
     const output = await postBusiness.getPostById(input);
+
     expect(output).toEqual({
       id: "id-mock",
-      creatorNickname: "normal.mock",
       content: "post-mock",
-      upvote: 10,
-      downvote: 10,
+      likes: 10,
+      dislikes: 10,
       createdAt: "2023-01-01",
       updatedAt: "2023-02-01",
-      comments: [
+      comments: 10,
+      commentList: [
         {
           id: "id-mock",
-          creatorNickname: "normal.mock",
+          creator_id: "id-mock",
+          post_id: "id-mock",
           content: "comment-mock",
-          upvote: 10,
-          downvote: 10,
-          createdAt: "2023-01-01",
-          updatedAt: "2023-02-01",
+          likes: 10,
+          dislikes: 10,
+          created_at: "2023-01-01",
+          updated_at: "2023-02-01",
+          rating: null,
         },
       ],
+      rating: true,
+      creator: { id: "id-mock-fulano", name: "" },
     });
   });
 
-  it("error test: id not found", async () => {
+  test("error test: login failed", async () => {
     expect.assertions(2);
     try {
-      const input = {
-        id: "xxx",
-        token: "token-mock-normal",
-      };
-
-      await postBusiness.getPostById(input);
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        expect(error.message).toBe("ERROR: 'id' not found.");
-        expect(error.statusCode).toBe(404);
-      }
-    }
-  });
-
-  it("error test: login failed", async () => {
-    expect.assertions(2);
-    try {
-      const input = {
-        id: "id-mock",
+      const input = GetPostByIdSchema.parse({
         token: "xxx",
-      };
+        id: "id-mock",
+      });
 
       await postBusiness.getPostById(input);
     } catch (error) {
       if (error instanceof BadRequestError) {
-        expect(error.message).toBe("ERROR: Login failed.");
+        expect(error.message).toBe("Token inválido");
         expect(error.statusCode).toBe(400);
       }
     }
