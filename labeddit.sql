@@ -9,7 +9,6 @@ CREATE TABLE users (
 );
 
 SELECT * FROM users;
-DROP TABLE users;
 
 INSERT INTO users (id, name, email, password, role)
 VALUES
@@ -37,7 +36,6 @@ CREATE TABLE posts (
 
 
 SELECT * FROM posts;
-DROP TABLE posts;
 
 CREATE TABLE comments (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
@@ -57,7 +55,6 @@ CREATE TABLE comments (
 );
 
 SELECT * FROM comments;
-DROP TABLE comments;
 
 CREATE TABLE post_like_dislike (
   post_id TEXT NOT NULL,
@@ -72,7 +69,6 @@ CREATE TABLE post_like_dislike (
 );
 
 SELECT * FROM post_like_dislike;
-DROP TABLE post_like_dislike;
 
 CREATE TABLE comment_like_dislike (
   comment_id TEXT NOT NULL,
@@ -87,4 +83,3 @@ CREATE TABLE comment_like_dislike (
 );
 
 SELECT * FROM comment_like_dislike;
-DROP TABLE comment_like_dislike;
