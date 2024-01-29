@@ -34,10 +34,6 @@ export class UserBusiness {
       throw new BadRequestError("token inválido");
     }
 
-    // if (payload.role !== USER_ROLES.ADMIN) {
-    //   throw new BadRequestError("Somente admins podem acessar esse recurso");
-    // }
-
     const usersDB = await this.userDatabase.findUsers(nameToSearch);
 
     const users = usersDB.map((userDB) => {
