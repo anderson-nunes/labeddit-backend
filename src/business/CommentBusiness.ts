@@ -97,7 +97,7 @@ export class CommentBusiness {
     return {
       ...commentDB,
       creator: {
-        id: commentDB.created_at,
+        id: payload.id,
         name: payload.name,
       },
     };

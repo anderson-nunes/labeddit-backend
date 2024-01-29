@@ -128,6 +128,10 @@ export class PostBusiness {
         const parsedComment: CommentDB = {
           ...comment,
           rating: checkRating(likeDislikeByPost),
+          creator: {
+            name: comment.creator_name,
+            id: comment.creator_id,
+          },
         };
 
         commentList.push(parsedComment);
@@ -192,7 +196,7 @@ export class PostBusiness {
     return {
       ...postDB,
       creator: {
-        id: postDB.created_at,
+        id: payload.id,
         name: payload.name,
       },
     };
