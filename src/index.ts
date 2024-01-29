@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.listen(process.env.PORT || 3003, () => {
-  console.log(`Servidor rodando na porta ${3003}`);
+  console.log(`Servidor rodando na porta ${Number(process.env.PORT)}`);
 });
 
 app.use("/users", userRouter);
