@@ -87,9 +87,11 @@ npm run test:coverage
   - [ ] login
   - [ ] create post
   - [ ] get posts
-  - [ ] edit post
-  - [ ] delete post
+  - [ ] get postsById
   - [ ] like / dislike post
+  - [ ] create comment
+  - [ ] get comments
+  - [ ] like / dislike comment
 
 - Autenticação e autorização
 
