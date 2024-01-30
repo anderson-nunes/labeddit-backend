@@ -6,6 +6,10 @@
 
 https://documenter.getpostman.com/view/28316400/2s9YysC1jU
 
+# Repositório Labeddit Front-end
+
+https://github.com/anderson-nunes/labeddit-frontend
+
 # Modelagem
 
 Clique [aqui](./src/assets/modelagem.png) para visualizar a modelagem do banco de dados
