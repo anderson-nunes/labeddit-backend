@@ -1,5 +1,10 @@
 import { CommentDatabase } from "../database/CommentDatabase";
 import { PostDatabase } from "../database/PostDatabase";
+import { BadRequestError } from "../errors/BadRequestError";
+import { NotFoundError } from "../errors/NotFoundError";
+import { UnauthorizedError } from "../errors/UnauthorizedError";
+import { IdGenerator } from "../services/IdGenerator";
+import { TokenManager } from "../services/TokenManager";
 import {
   CreateCommentInputDTO,
   CreateCommentOutputDTO,
@@ -12,16 +17,12 @@ import {
   LikeOrDislikeCommentInputDTO,
   LikeOrDislikeCommentOutputDTO,
 } from "../dtos/comments/likeOrDislikeComments.dto";
-import { BadRequestError } from "../errors/BadRequestError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { UnauthorizedError } from "../errors/UnauthorizedError";
+
 import {
   COMMENT_LIKES,
   Comment,
   LikeDislikeCommentDB,
 } from "../models/Comments";
-import { IdGenerator } from "../services/IdGenerator";
-import { TokenManager } from "../services/TokenManager";
 
 export class CommentBusiness {
   constructor(
